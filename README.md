@@ -10,7 +10,7 @@
 - [Jenkins Plugins](#jenkins-plugins)
 - [(*optional*) Jenkins Global Tool Configuration](#optional-jenkins-global-tool-configuration)
 - [Create JAR using Jenkins Job](#create-jar-using-jenkins-job)
-- [Create Docker image from the JAR](#create-docker-image-from-the-jar)
+- [Create Docker Container from the JAR](#create-docker-container-from-the-jar)
 - [Errors](#errors)
 
 # Versions
@@ -103,6 +103,8 @@ brew services restart jenkins-lts
 
 ! On "Unlock Jenkins" page is the path where you can find the initial password that you need to use.
 
+! Jenkins page can be found [here](http://localhost:8080)
+
 # Jenkins Plugins
 
 1. Go to Jenkins *Dashboard*
@@ -144,18 +146,52 @@ mvn clean install
 
 > NOTE: Change the lines according to your setup. 
 
-# Create Docker image from the JAR
-
-1. Select the job and click on **Configure**
-2. Just add the following lines of code in **Build Steps** 
+# Create Docker Container from the JAR
+1. Make sure that *Docker* is running in background
+2. Select the job and click on **Configure**
+3. Just add the following lines of code in **Build Steps** 
 ![jenkins_docker_image](media/jenkins_docker_image.png)
 ```
 cd ..
 docker build -t server-image .
-docker run server-image server-container
+docker container create --name server-container server-image
 ```
-3. There should be some error regarding *Docker* like **docker: command not found**, but you can follow the optional step above to install it in *Jenkins* and after that restart both platforms.
-4. After running the job again, the docker starts creating the image   
+4. There should be some error regarding *Docker* like **docker: command not found**, but you can follow the optional step above to install it in *Jenkins* and after that restart both platforms.
+5. After running the job again, the docker starts creating the image   
 ![jenkins_docker_success](media/jenkins_docker_success.png)
+6. And finally, open the terminal and enter the following command
+```
+docker ps
+```
+7. You can see that the container is running. This is ok because that is what we wanted, but because is a Spring project, it means that the Jenkins job will never end so we need to create the container, but do not run it.
+![docker_running_container](media/docker_running_container.png)
+
+8. If you get an error like this, it is because there is already a container with that name on docker so to avoid this problem, the build steps should be changed. Firstly, the container should be stopped and deleted, and then rebuilt.:
+![docker_duplicate_container](/media/docker_duplicate_container.png)
+
+9. Change the code to the one below. I also added some *echo* commands to let the user know what is happening behind the scene.
+![docker_duplicate_container_solution](media/docker_duplicate_container_solution.png)
+
+```
+cd /Users/ovidiuceoca/.jenkins/workspace/Jenkins-docker/server
+source ~/.bash_profile
+mvn clean install
+cd ..
+echo "Building the image..."
+docker build -t server-image .
+echo "Stopping and removing already running container..."
+docker stop server-container || true && docker rm server-container || true
+echo "Creating the container..."
+docker container create --name server-container server-image
+echo "Container created. It is ready to run"
+```
+
+10. Now we have a created container but it is not running so open a terminal and run the following command:
+
+```
+docker start server-container
+```
+
+11. Now the container is running and everytime you push something to the git repo, the job will activate and create a new image and container based on the code you pushed.
 # Errors
 ![java_error_01](media/java_error_01.png)
