@@ -1,6 +1,7 @@
 package com.server.server.service;
 
 import com.server.server.model.AppUser;
+import com.server.server.model.Role;
 import com.server.server.repo.AppUserRepository;
 import com.server.server.repo.RoleRepository;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,6 +47,11 @@ public class AppUserService {
 
     public void addRoleToUser(String username, String roleName) {
         log.info("Adding role {} to AppUser {}", roleName, username);
-        appUserRepository.findAppUserByUsername(username).getRoles().add(roleRepository.findRoleByRoleName(roleName));
+        AppUser appUser = appUserRepository.findAppUserByUsername(username);
+        Role role = roleRepository.findRoleByRoleName(roleName);
+        ArrayList<Role> arrayList = appUser.getRoles();
+        arrayList.add(role);
+        appUser.setRoles(arrayList);
+        appUserRepository.save(appUser);
     }
 }

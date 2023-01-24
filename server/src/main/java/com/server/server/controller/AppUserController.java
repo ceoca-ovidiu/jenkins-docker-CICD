@@ -1,5 +1,6 @@
 package com.server.server.controller;
 
+import com.server.server.model.AddRoleToAppUserForm;
 import com.server.server.model.AppUser;
 import com.server.server.service.AppUserService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,12 @@ public class AppUserController {
     @DeleteMapping("/deleteAppUser")
     public ResponseEntity<?> deleteAppUser(@PathVariable String id) {
         appUserService.deleteAppUser(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/addRoleToAppUser")
+    public ResponseEntity<?> addRoleToAppUser(@RequestBody AddRoleToAppUserForm addRoleToAppUserForm) {
+        appUserService.addRoleToUser(addRoleToAppUserForm.getUsername(), addRoleToAppUserForm.getRoleName());
         return ResponseEntity.ok().build();
     }
 

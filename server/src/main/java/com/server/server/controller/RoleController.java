@@ -5,13 +5,11 @@ import com.server.server.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +23,10 @@ public class RoleController {
     public ResponseEntity<Role> createRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/role/createRole").toUriString());
         return ResponseEntity.created(uri).body(roleService.createRole(role));
+    }
+
+    @GetMapping("/getAllRoles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok().body(roleService.getAllRoles());
     }
 }

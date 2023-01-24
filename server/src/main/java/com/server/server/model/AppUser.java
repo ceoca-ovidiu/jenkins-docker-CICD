@@ -20,5 +20,5 @@ public class AppUser {
     private String userLastName;
     private String username;
     private String password;
-    private Collection<Role> roles = new ArrayList<>();
+    private ArrayList<Role> roles = new ArrayList<>();
 }
