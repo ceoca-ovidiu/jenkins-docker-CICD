@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/role")
+// This controller is responsible for the endpoints that manipulates the roles from the database
 public class RoleController {
 
     @Autowired
@@ -21,6 +22,7 @@ public class RoleController {
 
     @PostMapping("/createRole")
     public ResponseEntity<Role> createRole(@RequestBody Role role) {
+        // The uri is created to send the response as "created"
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/role/createRole").toUriString());
         return ResponseEntity.created(uri).body(roleService.createRole(role));
     }

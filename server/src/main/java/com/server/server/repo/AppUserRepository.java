@@ -4,6 +4,7 @@ import com.server.server.model.AppUser;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AppUserRepository extends MongoRepository<AppUser, String> {
     AppUser findAppUserByUsername(String username);
